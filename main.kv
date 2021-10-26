@@ -1,0 +1,432 @@
+#: import SlideTransition kivy.uix.screenmanager.SlideTransition
+
+
+<ItemDrawer>:
+    theme_text_color: "Custom"
+    on_release:
+        self.parent.set_color_item(self)
+
+    IconLeftWidget:
+        id: icon
+        icon: root.icon
+        theme_text_color: "Custom"
+        text_color: (0,0,0,1)
+
+<ContentNavigationDrawer>:
+    orientation: "vertical"
+    padding: "8dp"
+    spacing: "8dp"
+
+    MDLabel:
+        text: "Calendar Companion"
+        font_style: "Subtitle1"
+        size_hint_y: None
+        height: self.texture_size[1]
+
+    ScrollView:
+        DrawerList:
+            id: md_list
+
+
+
+
+Screen:
+    id: scr
+    MDNavigationLayout:
+
+        ScreenManager:
+            id: screen_manager
+
+            Screen:
+                name: "weekViewScreen"
+                id: week_view_screen
+
+                BoxLayout:
+                    orientation: 'vertical'
+
+                    MDToolbar:
+                        id: weekviewToolbar
+                        md_bg_color: app.theme_cls.primary_color
+                        left_action_items: [['menu', lambda x: nav_drawer.set_state("toggle")]]
+
+                    MDToolbar:
+                        size_hint_y: .08
+                        id: weekviewToolsbar
+                        md_bg_color: app.theme_cls.primary_color
+                        right_action_items: [['calendar-week', lambda x: app.this_week()],['calendar-today', lambda x: app.today()],['calendar-search', lambda x: app.pick_display_date()],["view-week", lambda x: app.days_callback(x)],['arrow-left', lambda x: app.prev_week()],['arrow-right', lambda x: app.next_week()]]
+                    Widget:
+
+                BoxLayout:
+                    size_hint_y: 1.0 - (weekviewToolbar.height+weekviewToolsbar.height)/root.height
+                    orientation: 'vertical'
+
+                    BoxLayout:
+                        orientation: 'horizontal'
+                        size_hint_y: .09
+
+                        FloatLayout:
+                            id: time_column_label
+                            size_hint: None, 1
+                            size: (150, weekdays.height)
+                            height: weekdays.height
+
+                        BoxLayout:
+                            id: weekdays
+                            orientation: 'horizontal'
+
+                    LineHorizontal:
+                        size_hint_y: .01
+
+                    ScrollView:
+                        size_hint_y: 1.0 - (weekviewToolbar.height)/root.height
+                        do_scroll_x: False
+
+
+
+                        BoxLayout:
+                            orientation: 'horizontal'
+                            size_hint_y: None
+                            id: weekview_screen
+                            height: "1600dp"
+
+                            FloatLayout:
+                                id: time_column
+                                size_hint: None, 1
+                                size: (150, weekview_screen.height)
+                                height: weekview_screen.height
+
+                            FloatLayout:
+                                id: weekview
+                                height: weekview_screen.height
+
+                    FloatLayout:
+                        size_hint_y: .1
+                        orientation: 'horizontal'
+
+
+                        MDIconButton:
+                            icon: "undo"
+                            pos_hint: {"center_x": .3, "center_y": .5}
+                            on_press:
+                                app.undo()
+
+
+                        MDIconButton:
+                            icon: "skip-next"
+                            pos_hint: {"center_x": .5, "center_y": .5}
+                            on_release:
+                                app.event_transition()
+                        MDIconButton:
+                            icon: "skip-forward"
+                            pos_hint: {"center_x": .7, "center_y": .5}
+                            on_press:
+                                app.skip()
+
+
+
+
+                MDFloatingActionButton:
+                    root_button_anim: True
+                    icon: 'plus'
+                    pos_hint: {"center_x": .87, "y": .05}
+                    on_press: app.new_event()
+
+
+
+
+            Screen:
+                name: "settings"
+                BoxLayout:
+                    orientation: 'vertical'
+
+                    MDToolbar:
+                        id: SettingsToolbar
+                        title: "Settings"
+                        md_bg_color: app.theme_cls.primary_color
+                        left_action_items: [['menu', lambda x: nav_drawer.set_state("toggle")]]
+
+                    Widget:
+
+
+                ScrollView:
+                    do_scroll_x: False
+                    size_hint_y: 1.0 - SettingsToolbar.height/root.height
+
+                    MDList:
+                        TwoLineRightIconListItem:
+                            id: timetype
+                            text: "Time"
+                            secondary_text: "Military"
+                            SwitchItem:
+                                id: timetypetoggleswitch
+                                color:
+                                on_active:
+                                    app.time_type(*args)
+
+                        TwoLineRightIconListItem:
+                            id: snackbartoggle
+                            text: "Snackbars"
+                            secondary_text: "Off"
+                            SwitchItem:
+                                id: snackbartoggleswitch
+                                color:
+                                on_active:
+                                    app.snackbar_toggle(*args)
+
+            Screen:
+                name: "parentEventsScreen"
+                BoxLayout:
+                    orientation: 'vertical'
+
+                    MDToolbar:
+                        id: SettingsToolbar
+                        title: "Recurring Events"
+                        md_bg_color: app.theme_cls.primary_color
+                        left_action_items: [['menu', lambda x: nav_drawer.set_state("toggle")]]
+
+                    Widget:
+
+                ScrollView:
+                    do_scroll_x: False
+                    size_hint_y: 1.0 - SettingsToolbar.height/root.height
+
+                    MDList:
+                        id: parent_list
+
+
+            Screen:
+                name: "priorityScreen"
+                BoxLayout:
+                    orientation: 'vertical'
+
+                    MDToolbar:
+                        id: PriorityToolbar
+                        title: "Event Kinds"
+                        md_bg_color: app.theme_cls.primary_color
+                        left_action_items: [['menu', lambda x: nav_drawer.set_state("toggle")]]
+
+                    Widget:
+
+                ScrollView:
+                    do_scroll_x: False
+                    size_hint_y: 1.0 - SettingsToolbar.height/root.height
+
+                    MDList:
+                        id: priority_list
+
+            Screen:
+                name: "editParentScreen"
+
+                BoxLayout:
+                    orientation: 'vertical'
+
+                    MDToolbar:
+                        id: editParentToolbar
+                        title: "Recurring Events"
+                        md_bg_color: app.theme_cls.primary_color
+                        left_action_items: [['arrow-left', lambda x: app.back_to_parent_screen()]]
+                        right_action_items: [['close-box-outline', lambda x: app.delete_parent_dialog(editParentToolbar.title)]]
+
+                    Widget:
+
+                ScrollView:
+                    do_scroll_x: False
+                    size_hint_y: 1.0 - SettingsToolbar.height/root.height
+
+                    MDList:
+                        id: parent_attributes_list
+
+            Screen:
+                name: "newParentScreen"
+
+
+                ScrollView:
+                    do_scroll_x: False
+                    BoxLayout:
+                        orientation: 'vertical'
+                        size_hint_y: None
+                        spacing: 10
+
+                        height: "500dp"
+
+                        FloatLayout:
+                            MDIconButton:
+                                icon: "window-close"
+                                on_press: app.back_to_parent_screen()
+                                pos_hint: {"center_y": .95}
+
+                            TextInput:
+                                hint_text: "Title"
+                                pos_hint: {"center_x": .45, "center_y": .93}
+                                text_color: (0, 0, 0, 1)
+                                size_hint_x: .5
+                                size_hint_y: .1
+                                background_color: 0, 0, 0, 0
+                                font_size: 42
+
+                            MDRectangleFlatButton:
+                                text: "Save"
+                                line_color: (0, 0, 0, 1)
+                                text_color: (0, 0, 0, 1)
+                                pos_hint: {"center_x": .9, "center_y": .95}
+
+
+
+                            LineHorizontal:
+                                pos: (0, 850)
+
+                            MDLabel:
+                                text: "Kind:"
+                                pos_hint: {"x": .1, "y": .29}
+                                font_size: 34
+
+                            MDRectangleFlatButton
+                                id: select_new_parent_kind
+                                text: ""
+                                line_color: 0, 0, 0, 1
+                                text_color: 0, 0, 0, 1
+                                pos_hint: {"x": .3, "y": .75}
+                                on_press: app.kind_menu_open(self)
+
+                            LineHorizontal:
+                                pos_hint: {"y": .73}
+
+                            MDLabel:
+                                text: "Date Range:"
+                                pos_hint: {"x": .1, "y": .17}
+                                font_size: 34
+
+                            LineHorizontal:
+                                pos_hint: {"y": .61}
+
+                            MDLabel:
+                                text: "Repeats:"
+                                pos_hint: {"x": .1, "y": .05}
+                                font_size: 34
+
+
+                            LineHorizontal:
+                                pos_hint: {"y": .49}
+
+                            MDLabel:
+                                text: "Time Start/End:"
+                                pos_hint: {"x": .1, "y": -.07}
+                                font_size: 34
+
+                            LineHorizontal:
+                                pos_hint: {"y": .37}
+
+
+                            MDLabel:
+                                text: "Early/Late Bounds:"
+                                pos_hint: {"x": .1, "y": -.19}
+                                font_size: 34
+                            LineHorizontal:
+                                pos_hint: {"y": .25}
+
+                            MDLabel:
+                                text: "Minimum Duration:"
+                                pos_hint: {"x": .1, "y": -.31}
+                                font_size: 34
+
+
+
+
+
+
+
+
+
+        MDNavigationDrawer:
+            id: nav_drawer
+
+            ContentNavigationDrawer:
+                id: content_drawer
+
+
+
+
+
+<TimeLineHorizontal>:
+    canvas:
+        Color:
+            rgba: .1, 0, 1, .2
+        Line:
+            width: 1.
+            points: (self.x, self.y, self.width+150, self.y)
+
+<LineHorizontal>:
+    canvas:
+        Color:
+            rgba: .1, 0, 1, .2
+        Line:
+            width: 1.
+            points: (self.x, self.y, self.width, self.y)
+
+<ListLineHorizontal>:
+    canvas:
+        Color:
+            rgba: 0, 0, 0, .12
+        Line:
+            width: 1.
+            points: (self.x, self.y, self.width, self.y)
+
+<NowLine>:
+    canvas:
+        Color:
+            rgba: .9, 0, 0, .9
+        Line:
+            width: 2.
+            points: self.x, self.y, self.x+self.width, self.y
+        Ellipse:
+            pos: (self.x - 10, self.y - 10)
+            size: (20,20)
+
+
+
+<LineVertical>:
+    canvas:
+        Color:
+            rgba: .1, 0, 1, .2
+        Line:
+            width: 1.
+            points: (self.x, self.y, self.x, self.height)
+
+
+<AddItemToList>:
+    MDIconButton:
+        icon: "plus-circle"
+        pos_hint: {"center_x": .5, "center_y": .5}
+
+
+<EventClickDialog>:
+    id: event_click_dialog
+    orientation: "vertical"
+    size_hint_y: None
+    height: "80dp"
+    MDLabel:
+        id: event_dialog_date
+        text: 'date here'
+        pos_hint: {"x": .1, "y": .7}
+    MDLabel
+        text: 'parent here'
+        pos_hint: {"x": .1, "y": .5}
+
+<WeekdayButton>:
+    size_hint: None, None
+    size:
+        (dp(42), dp(42)) \
+        if root.theme_cls.device_orientation == "portrait" \
+        else (dp(32), dp(32))
+    disabled: True
+
+    canvas:
+        Color:
+            rgba: (0,0,0,.4)
+
+        Ellipse:
+            size:
+                (dp(42), dp(42)) \
+                if root.theme_cls.device_orientation == "portrait" \
+                else (dp(32), dp(32))
+            pos: self.pos
