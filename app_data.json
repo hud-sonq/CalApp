@@ -1,0 +1,14 @@
+{
+  "settings": {
+    "snackbars": "off",
+    "timetype": "military"
+  },
+  "tags": [
+    "working",
+    "sleeping",
+    "eating",
+    "traveling"
+  ],
+  "previous screen": "newEventScreen",
+  "current screen": "weekViewScreen"
+}

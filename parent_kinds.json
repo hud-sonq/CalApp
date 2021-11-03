@@ -1,0 +1,33 @@
+{
+  "Sleep": {
+    "movable": "False",
+    "squishable": "False",
+    "color": "dark grey"
+  },
+  "Class": {
+    "movable": "False",
+    "squishable": "False",
+    "color": "dark blue"
+  },
+  "Homework": {
+    "movable": "True",
+    "squishable": "False",
+    "color": "light blue"
+  },
+  "Spirituality": {
+    "movable": "True",
+    "squishable": "False",
+    "color": "purple"
+  },
+  "Socializing": {
+    "movable": "True",
+    "squishable": "True",
+    "color": "orange"
+  },
+  "None": {
+    "movable": "True",
+    "squishable": "True",
+    "color": "orange"
+
+  }
+}
